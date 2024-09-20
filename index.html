@@ -24,7 +24,7 @@
     .map-container {
         position: relative;
         width: 100%;
-        max-width: 800px;
+        /* Removed max-width to allow the map to be as large as possible */
         padding-bottom: 65%; /* Maintain aspect ratio */
     }
     #armenia-map {
@@ -39,7 +39,7 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-size: 6vw; /* Responsive font size */
+        font-size: 10vw; /* Increased font size for larger map */
         font-weight: 800;
         text-align: center;
         color: rgba(0, 0, 0, 0.7);
@@ -60,13 +60,13 @@
         text-align: center;
     }
     .stat-label {
-        font-size: 4vw;
+        font-size: 5vw; /* Increased font size */
         font-weight: 300;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
     .stat-value {
-        font-size: 5vw;
+        font-size: 6vw; /* Increased font size */
         font-weight: 700;
         margin-top: -5px;
     }
@@ -79,6 +79,8 @@
             width: 70%;
             padding-bottom: 65%;
             order: 2; /* Place map on the right */
+            /* Reintroduce max-width for landscape mode */
+            max-width: none;
         }
         .stats-container {
             width: 30%;
