@@ -17,62 +17,82 @@
             max-width: 100%;
             padding: 20px;
             box-sizing: border-box;
+            position: relative;
+        }
+        .map-container {
+            position: relative;
+            width: 80%;
+            padding-bottom: 60%;
+            margin-left: auto;
         }
         #armenia-map {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: auto;
-            max-height: 70vh;
-        }
-        .stats-container {
-            margin-top: 30px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-        .stat-item {
-            margin-bottom: 20px;
-            flex-basis: calc(50% - 20px);
-            text-align: center;
-        }
-        .stat-label {
-            font-size: 18px;
-            font-weight: 300;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .stat-value {
-            font-size: 48px;
-            font-weight: 700;
-            margin-top: -10px;
+            height: 100%;
         }
         #progress-text {
-            font-size: 72px;
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 64px;
             font-weight: 800;
             text-align: center;
-            margin: 20px 0;
+            color: rgba(0, 0, 0, 0.7);
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+        }
+        .stats-container {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 8px;
+            border-radius: 5px;
+            max-width: 40%;
+        }
+        .stat-item {
+            text-align: left;
+        }
+        .stat-label {
+            font-size: 12px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: -5px;
         }
     </style>
 </head>
 <body>
     <div id="armenia-run-challenge">
-        <svg id="armenia-map" viewBox="43.082746 38.270605 3.923174 3.477524"></svg>
-        <div id="progress-text">0%</div>
-        <div class="stats-container">
-            <div class="stat-item">
-                <div class="stat-label">Total Distance</div>
-                <div id="total-distance" class="stat-value">0 km</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">Average Distance</div>
-                <div id="avg-distance" class="stat-value">0 km</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">Average Heart Rate</div>
-                <div id="avg-heart-rate" class="stat-value">0 bpm</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">Total Elevation Gain</div>
-                <div id="total-elevation" class="stat-value">0 m</div>
+        <div class="map-container">
+            <svg id="armenia-map" viewBox="43.082746 38.270605 3.923174 3.477524"></svg>
+            <div id="progress-text">0%</div>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-label">Total Distance</div>
+                    <div id="total-distance" class="stat-value">0 km</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Average Distance</div>
+                    <div id="avg-distance" class="stat-value">0 km</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Average Heart Rate</div>
+                    <div id="avg-heart-rate" class="stat-value">0 bpm</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Total Elevation Gain</div>
+                    <div id="total-elevation" class="stat-value">0 m</div>
+                </div>
             </div>
         </div>
     </div>
