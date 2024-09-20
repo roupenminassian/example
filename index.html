@@ -23,8 +23,10 @@
     }
     .map-container {
         position: relative;
-        width: 120%;
-        padding-bottom: 65%; /* Maintain aspect ratio */
+        width: 130%;
+        margin-left: -15%;
+        padding-bottom: 25%; /* Maintain aspect ratio */
+        overflow: visible;
     }
     #armenia-map {
         position: absolute;
@@ -32,6 +34,8 @@
         left: 0;
         width: 120%;
         height: 100%;
+        transform: scale(1.2); /* Scale up by 20% */
+        transform-origin: center;
     }
     #progress-text {
         position: absolute;
