@@ -51,7 +51,7 @@
 <body>
     <div id="armenia-run-challenge">
         <svg id="armenia-map" viewBox="43.082746 38.270605 3.923174 3.477524"></svg>
-        <div id="progress-text"></div>
+        <div id="progress-text">0%</div>
         <div class="stats-container">
             <div class="stat-item">
                 <div class="stat-label">Total Distance</div>
@@ -99,13 +99,26 @@
             });
         }
 
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.textContent = Math.floor(progress * (end - start) + start).toFixed(0) + (obj.id === 'progress-text' ? '%' : '');
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
         async function fetchAndUpdateData() {
             try {
                 const data = await dummyFetchStravaData();
-                document.getElementById('total-distance').textContent = `${data.totalDistance} km`;
-                document.getElementById('avg-distance').textContent = `${data.avgDistance} km`;
-                document.getElementById('avg-heart-rate').textContent = `${data.avgHeartRate} bpm`;
-                document.getElementById('total-elevation').textContent = `${data.totalElevation} m`;
+                animateValue(document.getElementById('total-distance'), 0, data.totalDistance, 4000);
+                animateValue(document.getElementById('avg-distance'), 0, data.avgDistance, 4000);
+                animateValue(document.getElementById('avg-heart-rate'), 0, data.avgHeartRate, 4000);
+                animateValue(document.getElementById('total-elevation'), 0, data.totalElevation, 4000);
                 updateProgress(data.totalDistance);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -122,17 +135,14 @@
 
             const basePathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             basePathElement.setAttribute('d', borderPath);
-            basePathElement.setAttribute('fill', 'none');
+            basePathElement.setAttribute('fill', '#CCCCCC');
             basePathElement.setAttribute('stroke', 'black');
             basePathElement.setAttribute('stroke-width', '0.05');
 
             const progressPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             progressPathElement.setAttribute('d', borderPath);
-            progressPathElement.setAttribute('fill', 'none');
-            progressPathElement.setAttribute('stroke', 'black');
-            progressPathElement.setAttribute('stroke-width', '0.1');
-            progressPathElement.setAttribute('stroke-linecap', 'round');
-            progressPathElement.setAttribute('stroke-linejoin', 'round');
+            progressPathElement.setAttribute('fill', 'black');
+            progressPathElement.setAttribute('stroke', 'none');
 
             svg.appendChild(basePathElement);
             svg.appendChild(progressPathElement);
@@ -146,9 +156,9 @@
             
             const pathLength = progressPathElement.getTotalLength();
             progressPathElement.style.strokeDasharray = pathLength;
-            progressPathElement.style.strokeDashoffset = pathLength * (1 - progress / 100);
+            progressPathElement.style.clipPath = `inset(0 ${100 - progress}% 0 0)`;
             
-            document.getElementById('progress-text').textContent = `${progress.toFixed(0)}%`;
+            animateValue(document.getElementById('progress-text'), 0, progress, 2000);
         }
 
         window.addEventListener('load', () => {
