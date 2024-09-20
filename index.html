@@ -5,73 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Armenia Run Challenge</title>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: transparent;
-            color: black;
-            line-height: 1.6;
-        }
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        background-color: transparent;
+        color: black;
+        line-height: 1.6;
+    }
+    #armenia-run-challenge {
+        max-width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    .map-container {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        padding-bottom: 65%; /* Adjust to maintain aspect ratio */
+    }
+    #armenia-map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    #progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 4vw; /* Responsive font size */
+        font-weight: 800;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.7);
+        text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+    }
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 15px;
+        border-radius: 5px;
+        width: 100%;
+        max-width: 600px;
+        margin-bottom: 20px;
+    }
+    .stat-item {
+        text-align: left;
+    }
+    .stat-label {
+        font-size: 2vw;
+        font-weight: 300;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .stat-value {
+        font-size: 2.5vw;
+        font-weight: 700;
+        margin-top: -5px;
+    }
+    @media (min-width: 768px) {
         #armenia-run-challenge {
-            max-width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-            position: relative;
-            display: flex;
-            justify-content: flex-end;
+            flex-direction: row;
             align-items: flex-start;
         }
-        .map-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 65%;
-        }
-        #armenia-map {
-            position: absolute;
-            top: 0;
-            left: 30;
-            width: 100%;
-            height: 100%;
-        }
-        #progress-text {
-            position: absolute;
-            top: 35%;
-            left: 40%;
-            transform: translate(-50%, -50%);
-            font-size: 72px;
-            font-weight: 800;
-            text-align: center;
-            color: rgba(0, 0, 0, 0.7);
-            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
-        }
         .stats-container {
-            position: absolute;
-            top: 70px;
-            left: 0%;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 15px;
-            border-radius: 5px;
             width: 30%;
+            margin-right: 20px;
+            margin-bottom: 0;
         }
-        .stat-item {
-            text-align: left;
+        .map-container {
+            width: 70%;
+            padding-bottom: 65%;
         }
         .stat-label {
             font-size: 22px;
-            font-weight: 300;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
         .stat-value {
             font-size: 28px;
-            font-weight: 700;
-            margin-top: -5px;
         }
-    </style>
+        #progress-text {
+            font-size: 72px;
+        }
+    }
+</style>
+
 </head>
 <body>
     <div id="armenia-run-challenge">
@@ -100,127 +126,127 @@
     </div>
 
     <script>
-        const armeniaBorder = [
-            [43.582746, 41.092143], [44.97248, 41.248129], [45.179496, 40.985354],
-            [45.560351, 40.81229], [45.359175, 40.561504], [45.891907, 40.218476],
-            [45.610012, 39.899994], [46.034534, 39.628021], [46.483499, 39.464155],
-            [46.50572, 38.770605], [46.143623, 38.741201], [45.735379, 39.319719],
-            [45.739978, 39.473999], [45.298145, 39.471751], [45.001987, 39.740004],
-            [44.79399, 39.713003], [44.400009, 40.005], [43.656436, 40.253564],
-            [43.752658, 40.740201], [43.582746, 41.092143]
-        ];
+    const armeniaBorder = [
+        [43.582746, 41.092143], [44.97248, 41.248129], [45.179496, 40.985354],
+        [45.560351, 40.81229], [45.359175, 40.561504], [45.891907, 40.218476],
+        [45.610012, 39.899994], [46.034534, 39.628021], [46.483499, 39.464155],
+        [46.50572, 38.770605], [46.143623, 38.741201], [45.735379, 39.319719],
+        [45.739978, 39.473999], [45.298145, 39.471751], [45.001987, 39.740004],
+        [44.79399, 39.713003], [44.400009, 40.005], [43.656436, 40.253564],
+        [43.752658, 40.740201], [43.582746, 41.092143]
+    ];
 
-        const totalBorderLength = 1254;
+    const totalBorderLength = 1254;
 
-        function dummyFetchStravaData() {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    const data = {
-                        totalDistance: Math.floor(Math.random() * 1000),
-                        avgDistance: Math.floor(Math.random() * 20) + 5,
-                        avgHeartRate: Math.floor(Math.random() * 40) + 120,
-                        totalElevation: Math.floor(Math.random() * 5000)
-                    };
-                    resolve(data);
-                }, 1000);
-            });
-        }
-
-        function easeInOutCubic(t) {
-            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        }
-
-        function animateValue(obj, start, end, duration) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const easedProgress = easeInOutCubic(progress);
-                const value = Math.floor(easedProgress * (end - start) + start);
-                
-                if (obj.id === 'progress-text') {
-                    obj.textContent = value.toFixed(0) + '%';
-                } else {
-                    const unit = obj.id === 'avg-heart-rate' ? ' bpm' : (obj.id === 'total-elevation' ? ' m' : ' km');
-                    obj.textContent = value.toFixed(0) + unit;
-                }
-                
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
-
-        async function fetchAndUpdateData() {
-            try {
-                const data = await dummyFetchStravaData();
-                animateValue(document.getElementById('total-distance'), 0, data.totalDistance, 4000);
-                animateValue(document.getElementById('avg-distance'), 0, data.avgDistance, 4000);
-                animateValue(document.getElementById('avg-heart-rate'), 0, data.avgHeartRate, 4000);
-                animateValue(document.getElementById('total-elevation'), 0, data.totalElevation, 4000);
-                updateProgress(data.totalDistance);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        }
-
-        function initArmeniaMap() {
-            const svg = document.getElementById('armenia-map');
-
-            const minY = Math.min(...armeniaBorder.map(p => p[1]));
-            const maxY = Math.max(...armeniaBorder.map(p => p[1]));
-            const flippedBorder = armeniaBorder.map(([x, y]) => [x, maxY + minY - y]);
-            const borderPath = flippedBorder.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point[0]} ${point[1]}`).join(' ') + 'Z';
-
-            const basePathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            basePathElement.setAttribute('d', borderPath);
-            basePathElement.setAttribute('fill', 'none');
-            basePathElement.setAttribute('stroke', '#CCCCCC');
-            basePathElement.setAttribute('stroke-width', '0.05');
-
-            const progressPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            progressPathElement.setAttribute('d', borderPath);
-            progressPathElement.setAttribute('fill', 'none');
-            progressPathElement.setAttribute('stroke', 'black');
-            progressPathElement.setAttribute('stroke-width', '0.05');
-            progressPathElement.setAttribute('stroke-dasharray', '0 1000');
-
-            svg.appendChild(basePathElement);
-            svg.appendChild(progressPathElement);
-
-            return { progressPathElement };
-        }
-
-        function updateProgress(distance) {
-            const { progressPathElement } = initArmeniaMap();
-            const progress = Math.min((distance / totalBorderLength) * 100, 100);
-            
-            const pathLength = progressPathElement.getTotalLength();
-            const duration = 4000; // 4 seconds
-            let start = null;
-
-            function step(timestamp) {
-                if (!start) start = timestamp;
-                const elapsed = timestamp - start;
-                const easedProgress = easeInOutCubic(Math.min(elapsed / duration, 1));
-                
-                const dashLength = easedProgress * (progress / 100) * pathLength;
-                progressPathElement.setAttribute('stroke-dasharray', `${dashLength} ${pathLength}`);
-
-                if (elapsed < duration) {
-                    requestAnimationFrame(step);
-                }
-            }
-
-            requestAnimationFrame(step);
-            animateValue(document.getElementById('progress-text'), 0, progress, 4000);
-        }
-
-        window.addEventListener('load', () => {
-            initArmeniaMap();
-            fetchAndUpdateData();
+    function dummyFetchStravaData() {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const data = {
+                    totalDistance: Math.floor(Math.random() * 1000),
+                    avgDistance: Math.floor(Math.random() * 20) + 5,
+                    avgHeartRate: Math.floor(Math.random() * 40) + 120,
+                    totalElevation: Math.floor(Math.random() * 5000)
+                };
+                resolve(data);
+            }, 1000);
         });
-    </script>
+    }
+
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const easedProgress = easeInOutCubic(progress);
+            const value = Math.floor(easedProgress * (end - start) + start);
+            
+            if (obj.id === 'progress-text') {
+                obj.textContent = value.toFixed(0) + '%';
+            } else {
+                const unit = obj.id === 'avg-heart-rate' ? ' bpm' : (obj.id === 'total-elevation' ? ' m' : ' km');
+                obj.textContent = value.toFixed(0) + unit;
+            }
+            
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    async function fetchAndUpdateData() {
+        try {
+            const data = await dummyFetchStravaData();
+            animateValue(document.getElementById('total-distance'), 0, data.totalDistance, 4000);
+            animateValue(document.getElementById('avg-distance'), 0, data.avgDistance, 4000);
+            animateValue(document.getElementById('avg-heart-rate'), 0, data.avgHeartRate, 4000);
+            animateValue(document.getElementById('total-elevation'), 0, data.totalElevation, 4000);
+            updateProgress(data.totalDistance);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    function initArmeniaMap() {
+        const svg = document.getElementById('armenia-map');
+
+        const minY = Math.min(...armeniaBorder.map(p => p[1]));
+        const maxY = Math.max(...armeniaBorder.map(p => p[1]));
+        const flippedBorder = armeniaBorder.map(([x, y]) => [x, maxY + minY - y]);
+        const borderPath = flippedBorder.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point[0]} ${point[1]}`).join(' ') + 'Z';
+
+        const basePathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        basePathElement.setAttribute('d', borderPath);
+        basePathElement.setAttribute('fill', 'none');
+        basePathElement.setAttribute('stroke', '#CCCCCC');
+        basePathElement.setAttribute('stroke-width', '0.05');
+
+        const progressPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        progressPathElement.setAttribute('d', borderPath);
+        progressPathElement.setAttribute('fill', 'none');
+        progressPathElement.setAttribute('stroke', 'black');
+        progressPathElement.setAttribute('stroke-width', '0.05');
+        progressPathElement.setAttribute('stroke-dasharray', '0 1000');
+
+        svg.appendChild(basePathElement);
+        svg.appendChild(progressPathElement);
+
+        return { progressPathElement };
+    }
+
+    function updateProgress(distance) {
+        const { progressPathElement } = initArmeniaMap();
+        const progress = Math.min((distance / totalBorderLength) * 100, 100);
+        
+        const pathLength = progressPathElement.getTotalLength();
+        const duration = 4000; // 4 seconds
+        let start = null;
+
+        function step(timestamp) {
+            if (!start) start = timestamp;
+            const elapsed = timestamp - start;
+            const easedProgress = easeInOutCubic(Math.min(elapsed / duration, 1));
+            
+            const dashLength = easedProgress * (progress / 100) * pathLength;
+            progressPathElement.setAttribute('stroke-dasharray', `${dashLength} ${pathLength}`);
+
+            if (elapsed < duration) {
+                requestAnimationFrame(step);
+            }
+        }
+
+        requestAnimationFrame(step);
+        animateValue(document.getElementById('progress-text'), 0, progress, 4000);
+    }
+
+    window.addEventListener('load', () => {
+        initArmeniaMap();
+        fetchAndUpdateData();
+    });
+</script>
 </body>
 </html>
