@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armenia Run Challenge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #armenia-run-challenge {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .challenge-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .input-section, .map-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        #armenia-map {
+            width: 100%;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="armenia-run-challenge">
+        <h2>Armenia Run Challenge</h2>
+        <div class="challenge-container">
+            <div class="input-section">
+                <label for="kilometers">Kilometers Run:</label>
+                <input type="number" id="kilometers" value="0">
+                <div style="text-align: center;">
+                    <p>Run around Armenia's border!</p>
+                    <p><strong>Total distance: 1254 km</strong></p>
+                    <p id="progress-text"></p>
+                </div>
+            </div>
+            <div class="map-section">
+                <svg id="armenia-map" viewBox="43.082746 38.270605 3.923174 3.477524"></svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const armeniaBorder = [
+            [43.582746, 41.092143], [44.97248, 41.248129], [45.179496, 40.985354],
+            [45.560351, 40.81229], [45.359175, 40.561504], [45.891907, 40.218476],
+            [45.610012, 39.899994], [46.034534, 39.628021], [46.483499, 39.464155],
+            [46.50572, 38.770605], [46.143623, 38.741201], [45.735379, 39.319719],
+            [45.739978, 39.473999], [45.298145, 39.471751], [45.001987, 39.740004],
+            [44.79399, 39.713003], [44.400009, 40.005], [43.656436, 40.253564],
+            [43.752658, 40.740201], [43.582746, 41.092143]
+        ];
+
+        const totalBorderLength = 1254;
+
+        function initArmeniaMap() {
+            const svg = document.getElementById('armenia-map');
+            const inputKm = document.getElementById('kilometers');
+            const progressText = document.getElementById('progress-text');
+
+            const minY = Math.min(...armeniaBorder.map(p => p[1]));
+            const maxY = Math.max(...armeniaBorder.map(p => p[1]));
+            const flippedBorder = armeniaBorder.map(([x, y]) => [x, maxY + minY - y]);
+            const borderPath = flippedBorder.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point[0]} ${point[1]}`).join(' ') + 'Z';
+
+            const basePathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            basePathElement.setAttribute('d', borderPath);
+            basePathElement.setAttribute('fill', '#ecf0f1');
+            basePathElement.setAttribute('stroke', '#bdc3c7');
+            basePathElement.setAttribute('stroke-width', '0.05');
+
+            const progressPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            progressPathElement.setAttribute('d', borderPath);
+            progressPathElement.setAttribute('fill', 'none');
+            progressPathElement.setAttribute('stroke', '#3498db');
+            progressPathElement.setAttribute('stroke-width', '0.1');
+            progressPathElement.setAttribute('stroke-linecap', 'round');
+            progressPathElement.setAttribute('stroke-linejoin', 'round');
+
+            const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            textElement.setAttribute('x', '45');
+            textElement.setAttribute('y', '40');
+            textElement.setAttribute('text-anchor', 'middle');
+            textElement.setAttribute('dominant-baseline', 'middle');
+            textElement.setAttribute('font-size', '0.4');
+            textElement.setAttribute('font-weight', 'bold');
+            textElement.setAttribute('fill', '#2c3e50');
+
+            svg.appendChild(basePathElement);
+            svg.appendChild(progressPathElement);
+            svg.appendChild(textElement);
+
+            function updateProgress() {
+                const kilometers = parseFloat(inputKm.value);
+                const progress = Math.min((kilometers / totalBorderLength) * 100, 100);
+                
+                const pathLength = progressPathElement.getTotalLength();
+                progressPathElement.style.strokeDasharray = pathLength;
+                progressPathElement.style.strokeDashoffset = pathLength * (1 - progress / 100);
+                
+                textElement.textContent = `${progress.toFixed(0)}%`;
+                progressText.textContent = `${kilometers.toFixed(2)} km / ${totalBorderLength} km`;
+            }
+
+            inputKm.addEventListener('input', updateProgress);
+            updateProgress();
+        }
+
+        window.addEventListener('load', initArmeniaMap);
+    </script>
+</body>
+</html>
