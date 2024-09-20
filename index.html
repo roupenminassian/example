@@ -5,63 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Armenia Run Challenge</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        body, html {
             margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            background-color: #f0f0f0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: transparent;
+            color: black;
+            line-height: 1.6;
         }
         #armenia-run-challenge {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        h2 {
-            text-align: center;
-            color: #2c3e50;
-            font-size: 24px;
-            margin-bottom: 20px;
+            max-width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
         }
         #armenia-map {
             width: 100%;
-            height: 600px;
-            border: 2px solid #bdc3c7;
-            border-radius: 10px;
-            background-color: white;
+            height: auto;
+            max-height: 70vh;
         }
         .stats-container {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin-top: 20px;
+            margin-top: 30px;
         }
         .stat-item {
-            background-color: white;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 10px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            flex: 1;
-            min-width: 150px;
+            margin-bottom: 20px;
         }
         .stat-label {
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-bottom: 5px;
+            font-size: 18px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
+            font-size: 48px;
+            font-weight: 700;
+            margin-top: -10px;
+        }
+        #progress-text {
+            font-size: 72px;
+            font-weight: 800;
+            text-align: center;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
     <div id="armenia-run-challenge">
-        <div id="map-container">
-            <svg id="armenia-map" viewBox="43.082746 38.270605 3.923174 3.477524"></svg>
-        </div>
+        <svg id="armenia-map" viewBox="43.082746 38.270605 3.923174 3.477524"></svg>
+        <div id="progress-text"></div>
         <div class="stats-container">
             <div class="stat-item">
                 <div class="stat-label">Total Distance</div>
@@ -132,43 +122,33 @@
 
             const basePathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             basePathElement.setAttribute('d', borderPath);
-            basePathElement.setAttribute('fill', '#ecf0f1');
-            basePathElement.setAttribute('stroke', '#bdc3c7');
+            basePathElement.setAttribute('fill', 'none');
+            basePathElement.setAttribute('stroke', 'black');
             basePathElement.setAttribute('stroke-width', '0.05');
 
             const progressPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             progressPathElement.setAttribute('d', borderPath);
             progressPathElement.setAttribute('fill', 'none');
-            progressPathElement.setAttribute('stroke', '#3498db');
+            progressPathElement.setAttribute('stroke', 'black');
             progressPathElement.setAttribute('stroke-width', '0.1');
             progressPathElement.setAttribute('stroke-linecap', 'round');
             progressPathElement.setAttribute('stroke-linejoin', 'round');
 
-            const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            textElement.setAttribute('x', '45');
-            textElement.setAttribute('y', '40');
-            textElement.setAttribute('text-anchor', 'middle');
-            textElement.setAttribute('dominant-baseline', 'middle');
-            textElement.setAttribute('font-size', '0.4');
-            textElement.setAttribute('font-weight', 'bold');
-            textElement.setAttribute('fill', '#2c3e50');
-
             svg.appendChild(basePathElement);
             svg.appendChild(progressPathElement);
-            svg.appendChild(textElement);
 
-            return { progressPathElement, textElement };
+            return { progressPathElement };
         }
 
         function updateProgress(distance) {
-            const { progressPathElement, textElement } = initArmeniaMap();
+            const { progressPathElement } = initArmeniaMap();
             const progress = Math.min((distance / totalBorderLength) * 100, 100);
             
             const pathLength = progressPathElement.getTotalLength();
             progressPathElement.style.strokeDasharray = pathLength;
             progressPathElement.style.strokeDashoffset = pathLength * (1 - progress / 100);
             
-            textElement.textContent = `${progress.toFixed(0)}%`;
+            document.getElementById('progress-text').textContent = `${progress.toFixed(0)}%`;
         }
 
         window.addEventListener('load', () => {
