@@ -18,12 +18,14 @@
             padding: 20px;
             box-sizing: border-box;
             position: relative;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
         }
         .map-container {
             position: relative;
-            width: 80%;
-            padding-bottom: 60%;
-            margin-left: auto;
+            width: 85%;
+            padding-bottom: 65%;
         }
         #armenia-map {
             position: absolute;
@@ -37,7 +39,7 @@
             top: 25%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 64px;
+            font-size: 72px;
             font-weight: 800;
             text-align: center;
             color: rgba(0, 0, 0, 0.7);
@@ -45,27 +47,27 @@
         }
         .stats-container {
             position: absolute;
-            bottom: 10px;
-            left: 10px;
+            top: 10px;
+            left: -22%;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 5px;
+            gap: 10px;
             background-color: rgba(255, 255, 255, 0.8);
-            padding: 8px;
+            padding: 15px;
             border-radius: 5px;
-            max-width: 40%;
+            width: 20%;
         }
         .stat-item {
             text-align: left;
         }
         .stat-label {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 300;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         .stat-value {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: 700;
             margin-top: -5px;
         }
@@ -73,27 +75,27 @@
 </head>
 <body>
     <div id="armenia-run-challenge">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-label">Total Distance</div>
+                <div id="total-distance" class="stat-value">0 km</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Average Distance</div>
+                <div id="avg-distance" class="stat-value">0 km</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Average Heart Rate</div>
+                <div id="avg-heart-rate" class="stat-value">0 bpm</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Total Elevation Gain</div>
+                <div id="total-elevation" class="stat-value">0 m</div>
+            </div>
+        </div>
         <div class="map-container">
             <svg id="armenia-map" viewBox="43.082746 38.270605 3.923174 3.477524"></svg>
             <div id="progress-text">0%</div>
-            <div class="stats-container">
-                <div class="stat-item">
-                    <div class="stat-label">Total Distance</div>
-                    <div id="total-distance" class="stat-value">0 km</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Average Distance</div>
-                    <div id="avg-distance" class="stat-value">0 km</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Average Heart Rate</div>
-                    <div id="avg-heart-rate" class="stat-value">0 bpm</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Total Elevation Gain</div>
-                    <div id="total-elevation" class="stat-value">0 m</div>
-                </div>
-            </div>
         </div>
     </div>
 
