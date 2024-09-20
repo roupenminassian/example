@@ -17,16 +17,40 @@
         max-width: 100%;
         padding: 20px;
         box-sizing: border-box;
-        position: relative;
         display: flex;
-        flex-direction: column;  /* Default to column layout */
-        align-items: center;
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    .stats-container {
+        width: 30%;
+        max-width: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 15px;
+        border-radius: 5px;
+    }
+    .stat-item {
+        text-align: left;
+    }
+    .stat-label {
+        font-size: 18px;
+        font-weight: 300;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        margin-top: -5px;
     }
     .map-container {
         position: relative;
-        width: 100%;
-        max-width: 800px;  /* Increased max-width for larger map */
+        width: 70%;
+        max-width: 800px;
         padding-bottom: 65%; /* Maintain aspect ratio */
+        margin-left: 20px;
     }
     #armenia-map {
         position: absolute;
@@ -40,62 +64,35 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-size: 6vw; /* Larger responsive font size */
+        font-size: 48px;
         font-weight: 800;
         text-align: center;
         color: rgba(0, 0, 0, 0.7);
         text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
     }
-    .stats-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* 2x2 grid in portrait mode */
-        gap: 20px;
-        background-color: rgba(255, 255, 255, 0.8);
-        padding: 15px;
-        border-radius: 5px;
-        width: 100%;
-        max-width: 800px;  /* Match the map's max-width */
-        margin-top: 20px;
-    }
-    .stat-item {
-        text-align: left;
-    }
-    .stat-label {
-        font-size: 4vw;
-        font-weight: 300;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    .stat-value {
-        font-size: 5vw;
-        font-weight: 700;
-        margin-top: -5px;
-    }
-    @media (min-width: 1024px) {  /* Adjusted breakpoint for landscape mode */
+    @media (max-width: 768px) {
         #armenia-run-challenge {
-            flex-direction: row; /* Switch to row layout */
-            align-items: flex-start;
-        }
-        .map-container {
-            width: 70%;
-            padding-bottom: 65%;
-            order: 2; /* Position map on the right */
+            flex-direction: column;
+            align-items: center;
         }
         .stats-container {
-            width: 30%;
-            margin-top: 0;
-            margin-right: 20px;
-            grid-template-columns: 1fr; /* Stack stats vertically */
-            order: 1; /* Position stats on the left */
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+        .map-container {
+            width: 100%;
+            max-width: 600px;
+            margin-left: 0;
         }
         .stat-label {
-            font-size: 22px;
+            font-size: 4vw;
         }
         .stat-value {
-            font-size: 28px;
+            font-size: 5vw;
         }
         #progress-text {
-            font-size: 72px;
+            font-size: 6vw;
         }
     }
 </style>
