@@ -57,6 +57,7 @@
         flex-direction: column;
         gap: 10px;
         margin-bottom: 20px;
+        transition: opacity 0.5s ease-in-out;
       }
       #entry-form input {
         padding: 10px;
@@ -75,6 +76,7 @@
         border-radius: 5px;
         cursor: pointer;
         font-weight: bold;
+        transition: opacity 0.5s ease-in-out;
       }
       #timer {
         text-align: center;
@@ -218,9 +220,35 @@
           if (timeLeft < 0) {
             clearInterval(timerInterval);
             timerElement.textContent = "GO!";
+            hideInputFields();
             displayLeaderboard();
+            setTimeout(showInputFields, 10000); // Show input fields after 10 seconds
           }
         }, 1000);
+      }
+
+      function hideInputFields() {
+        document.getElementById("entry-form").style.opacity = "0";
+        document.getElementById("video-upload-btn").style.opacity = "0";
+        document.getElementById("start-timer").style.opacity = "0";
+        setTimeout(() => {
+          document.getElementById("entry-form").style.display = "none";
+          document.getElementById("video-upload-btn").style.display = "none";
+          document.getElementById("start-timer").style.display = "none";
+        }, 500);
+      }
+
+      function showInputFields() {
+        document.getElementById("athletes-list").innerHTML = "";
+        document.getElementById("timer").textContent = "";
+        document.getElementById("entry-form").style.display = "flex";
+        document.getElementById("video-upload-btn").style.display = "block";
+        document.getElementById("start-timer").style.display = "block";
+        setTimeout(() => {
+          document.getElementById("entry-form").style.opacity = "1";
+          document.getElementById("video-upload-btn").style.opacity = "1";
+          document.getElementById("start-timer").style.opacity = "1";
+        }, 50);
       }
 
       function displayLeaderboard() {
