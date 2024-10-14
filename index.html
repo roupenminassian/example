@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Strava Segment Leaderboard</title>
+    <title>Strava Club Leaderboard</title>
     <style>
       body,
       html {
@@ -64,13 +64,13 @@
   </head>
   <body>
     <div id="strava-leaderboard">
-      <h1>Strava Segment Leaderboard</h1>
+      <h1>Strava Club Leaderboard</h1>
       <div id="athletes-list"></div>
     </div>
 
     <script>
-      const STRAVA_ACCESS_TOKEN = "8b385201b02c2143a02c1632d8a8e4eead735557";
-      const SEGMENT_ID = "1289851";
+      const STRAVA_ACCESS_TOKEN = "a710792ddfb09e0c8bd43ae308c72ddfcd701860";
+      const CLUB_ID = "1289851";
 
       function easeInOutCubic(t) {
         return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -94,17 +94,43 @@
       async function fetchStravaData() {
         try {
           const response = await fetch(
-            `https://www.strava.com/api/v3/segments/${SEGMENT_ID}/leaderboard?access_token=${STRAVA_ACCESS_TOKEN}`
+            `https://www.strava.com/api/v3/clubs/${CLUB_ID}/activities?access_token=${STRAVA_ACCESS_TOKEN}&per_page=200`
           );
           if (!response.ok) {
             throw new Error("Failed to fetch data from Strava API");
           }
           const data = await response.json();
-          return data.entries;
+          return processStravaData(data);
         } catch (error) {
           console.error("Error fetching data from Strava:", error);
           return [];
         }
+      }
+
+      function processStravaData(activities) {
+        const athleteStats = {};
+        activities.forEach((activity) => {
+          if (activity.type === "Run") {
+            if (!athleteStats[activity.athlete.id]) {
+              athleteStats[activity.athlete.id] = {
+                name:
+                  activity.athlete.firstname + " " + activity.athlete.lastname,
+                totalDistance: 0,
+                totalTime: 0,
+                activities: 0,
+              };
+            }
+            athleteStats[activity.athlete.id].totalDistance +=
+              activity.distance / 1000; // Convert to km
+            athleteStats[activity.athlete.id].totalTime +=
+              activity.moving_time / 3600; // Convert to hours
+            athleteStats[activity.athlete.id].activities += 1;
+          }
+        });
+
+        return Object.values(athleteStats)
+          .sort((a, b) => b.totalDistance - a.totalDistance)
+          .map((athlete, index) => ({ ...athlete, rank: index + 1 }));
       }
 
       function createAthleteElement(athlete) {
@@ -112,25 +138,23 @@
         athleteElement.className = "athlete";
         athleteElement.innerHTML = `
             <div class="athlete-rank">${athlete.rank}</div>
-            <div class="athlete-name">${athlete.athlete_name}</div>
+            <div class="athlete-name">${athlete.name}</div>
             <div class="athlete-stats">
+                <div class="stat">
+                    <div class="stat-label">Distance</div>
+                    <div class="stat-value distance">0</div>
+                </div>
                 <div class="stat">
                     <div class="stat-label">Time</div>
                     <div class="stat-value time">0</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-label">Speed</div>
-                    <div class="stat-value speed">0</div>
+                    <div class="stat-label">Activities</div>
+                    <div class="stat-value activities">0</div>
                 </div>
             </div>
         `;
         return athleteElement;
-      }
-
-      function formatTime(seconds) {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
       }
 
       async function updateLeaderboard() {
@@ -142,32 +166,20 @@
           const athleteElement = createAthleteElement(athlete);
           athletesList.appendChild(athleteElement);
 
+          const distanceElement = athleteElement.querySelector(".distance");
           const timeElement = athleteElement.querySelector(".time");
-          const speedElement = athleteElement.querySelector(".speed");
+          const activitiesElement = athleteElement.querySelector(".activities");
 
-          // Animate time (from 0 to actual elapsed time)
-          animateValue(
-            {
-              textContent: "0:00",
-              set textContent(value) {
-                this._textContent = formatTime(Math.floor(value));
-              },
-              get textContent() {
-                return this._textContent;
-              },
-            },
-            0,
-            athlete.elapsed_time,
-            2000
-          );
-
-          // Animate speed (from 0 to actual speed)
-          animateValue(speedElement, 0, athlete.average_speed, 2000);
+          animateValue(distanceElement, 0, athlete.totalDistance, 2000);
+          animateValue(timeElement, 0, athlete.totalTime, 2000);
+          animateValue(activitiesElement, 0, athlete.activities, 2000);
 
           // Update final values after animation
           setTimeout(() => {
-            timeElement.textContent = formatTime(athlete.elapsed_time);
-            speedElement.textContent = athlete.average_speed.toFixed(1);
+            distanceElement.textContent =
+              athlete.totalDistance.toFixed(1) + " km";
+            timeElement.textContent = athlete.totalTime.toFixed(1) + " hrs";
+            activitiesElement.textContent = athlete.activities;
           }, 2000);
         });
       }
