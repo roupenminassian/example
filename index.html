@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Strava Club Leaderboard</title>
+    <title>Manual Leaderboard Entry</title>
     <style>
       body,
       html {
@@ -14,7 +14,7 @@
         color: #333;
         line-height: 1.6;
       }
-      #strava-leaderboard {
+      #leaderboard-container {
         max-width: 800px;
         margin: 20px auto;
         padding: 20px;
@@ -25,6 +25,30 @@
       h1 {
         text-align: center;
         color: #fc4c02;
+      }
+      #entry-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      #entry-form input {
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+      }
+      #entry-form button {
+        padding: 10px;
+        background-color: #fc4c02;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      #timer {
+        text-align: center;
+        font-size: 24px;
+        margin: 20px 0;
       }
       .athlete {
         display: flex;
@@ -63,14 +87,22 @@
     </style>
   </head>
   <body>
-    <div id="strava-leaderboard">
-      <h1>Strava Club Leaderboard</h1>
+    <div id="leaderboard-container">
+      <h1>Manual Leaderboard Entry</h1>
+      <div id="entry-form">
+        <input type="text" id="athlete-name" placeholder="Athlete Name" />
+        <input type="number" id="distance" placeholder="Distance (km)" />
+        <input type="number" id="time" placeholder="Time (hours)" />
+        <input type="number" id="elevation" placeholder="Elevation (m)" />
+        <button onclick="addAthlete()">Add Athlete</button>
+      </div>
+      <button onclick="startTimer()">Start 5-second Timer</button>
+      <div id="timer"></div>
       <div id="athletes-list"></div>
     </div>
 
     <script>
-      const STRAVA_ACCESS_TOKEN = "a710792ddfb09e0c8bd43ae308c72ddfcd701860";
-      const CLUB_ID = "1289851";
+      let athletes = [];
 
       function easeInOutCubic(t) {
         return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -91,100 +123,88 @@
         window.requestAnimationFrame(step);
       }
 
-      async function fetchStravaData() {
-        try {
-          const response = await fetch(
-            `https://www.strava.com/api/v3/clubs/${CLUB_ID}/activities?access_token=${STRAVA_ACCESS_TOKEN}&per_page=200`
-          );
-          if (!response.ok) {
-            throw new Error("Failed to fetch data from Strava API");
-          }
-          const data = await response.json();
-          return processStravaData(data);
-        } catch (error) {
-          console.error("Error fetching data from Strava:", error);
-          return [];
+      function addAthlete() {
+        const name = document.getElementById("athlete-name").value;
+        const distance = parseFloat(document.getElementById("distance").value);
+        const time = parseFloat(document.getElementById("time").value);
+        const elevation = parseFloat(
+          document.getElementById("elevation").value
+        );
+
+        if (name && !isNaN(distance) && !isNaN(time) && !isNaN(elevation)) {
+          athletes.push({ name, distance, time, elevation });
+          clearForm();
+        } else {
+          alert("Please fill in all fields with valid numbers.");
         }
       }
 
-      function processStravaData(activities) {
-        const athleteStats = {};
-        activities.forEach((activity) => {
-          if (activity.type === "Run") {
-            if (!athleteStats[activity.athlete.id]) {
-              athleteStats[activity.athlete.id] = {
-                name:
-                  activity.athlete.firstname + " " + activity.athlete.lastname,
-                totalDistance: 0,
-                totalTime: 0,
-                activities: 0,
-              };
-            }
-            athleteStats[activity.athlete.id].totalDistance +=
-              activity.distance / 1000; // Convert to km
-            athleteStats[activity.athlete.id].totalTime +=
-              activity.moving_time / 3600; // Convert to hours
-            athleteStats[activity.athlete.id].activities += 1;
+      function clearForm() {
+        document.getElementById("athlete-name").value = "";
+        document.getElementById("distance").value = "";
+        document.getElementById("time").value = "";
+        document.getElementById("elevation").value = "";
+      }
+
+      function startTimer() {
+        let timeLeft = 5;
+        const timerElement = document.getElementById("timer");
+        const timerInterval = setInterval(() => {
+          timerElement.textContent = timeLeft;
+          timeLeft--;
+          if (timeLeft < 0) {
+            clearInterval(timerInterval);
+            timerElement.textContent = "Time's up!";
+            displayLeaderboard();
           }
-        });
-
-        return Object.values(athleteStats)
-          .sort((a, b) => b.totalDistance - a.totalDistance)
-          .map((athlete, index) => ({ ...athlete, rank: index + 1 }));
+        }, 1000);
       }
 
-      function createAthleteElement(athlete) {
-        const athleteElement = document.createElement("div");
-        athleteElement.className = "athlete";
-        athleteElement.innerHTML = `
-            <div class="athlete-rank">${athlete.rank}</div>
-            <div class="athlete-name">${athlete.name}</div>
-            <div class="athlete-stats">
-                <div class="stat">
-                    <div class="stat-label">Distance</div>
-                    <div class="stat-value distance">0</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Time</div>
-                    <div class="stat-value time">0</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Activities</div>
-                    <div class="stat-value activities">0</div>
-                </div>
-            </div>
-        `;
-        return athleteElement;
-      }
-
-      async function updateLeaderboard() {
+      function displayLeaderboard() {
         const athletesList = document.getElementById("athletes-list");
         athletesList.innerHTML = ""; // Clear existing content
 
-        const athletes = await fetchStravaData();
-        athletes.forEach((athlete) => {
-          const athleteElement = createAthleteElement(athlete);
+        athletes.sort((a, b) => b.distance - a.distance);
+
+        athletes.forEach((athlete, index) => {
+          const athleteElement = document.createElement("div");
+          athleteElement.className = "athlete";
+          athleteElement.innerHTML = `
+                <div class="athlete-rank">${index + 1}</div>
+                <div class="athlete-name">${athlete.name}</div>
+                <div class="athlete-stats">
+                    <div class="stat">
+                        <div class="stat-label">Distance</div>
+                        <div class="stat-value distance">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Time</div>
+                        <div class="stat-value time">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Elevation</div>
+                        <div class="stat-value elevation">0</div>
+                    </div>
+                </div>
+            `;
           athletesList.appendChild(athleteElement);
 
           const distanceElement = athleteElement.querySelector(".distance");
           const timeElement = athleteElement.querySelector(".time");
-          const activitiesElement = athleteElement.querySelector(".activities");
+          const elevationElement = athleteElement.querySelector(".elevation");
 
-          animateValue(distanceElement, 0, athlete.totalDistance, 2000);
-          animateValue(timeElement, 0, athlete.totalTime, 2000);
-          animateValue(activitiesElement, 0, athlete.activities, 2000);
+          animateValue(distanceElement, 0, athlete.distance, 2000);
+          animateValue(timeElement, 0, athlete.time, 2000);
+          animateValue(elevationElement, 0, athlete.elevation, 2000);
 
           // Update final values after animation
           setTimeout(() => {
-            distanceElement.textContent =
-              athlete.totalDistance.toFixed(1) + " km";
-            timeElement.textContent = athlete.totalTime.toFixed(1) + " hrs";
-            activitiesElement.textContent = athlete.activities;
+            distanceElement.textContent = athlete.distance.toFixed(1) + " km";
+            timeElement.textContent = athlete.time.toFixed(1) + " hrs";
+            elevationElement.textContent = athlete.elevation.toFixed(0) + " m";
           }, 2000);
         });
       }
-
-      window.addEventListener("load", updateLeaderboard);
     </script>
   </body>
 </html>
