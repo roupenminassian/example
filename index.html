@@ -3,13 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leaderboard with Video Border</title>
+    <title>Edgy Minimalist Leaderboard</title>
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap");
+
       body,
       html {
         margin: 0;
         padding: 0;
-        font-family: "Helvetica Neue", Arial, sans-serif;
+        font-family: "Roboto Mono", monospace;
         background-color: black;
         color: white;
         height: 100%;
@@ -35,65 +37,77 @@
       }
       #leaderboard-container {
         position: absolute;
-        top: 20px;
-        left: 20px;
-        right: 20px;
-        bottom: 20px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background-color: rgba(0, 0, 0, 0.7);
-        border-radius: 10px;
         z-index: 1;
-        overflow-y: auto;
-        padding: 20px;
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        padding: 20px;
       }
       h1 {
         text-align: center;
-        font-size: 24px;
-        margin-bottom: 20px;
+        font-size: 36px;
+        margin-bottom: 40px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
       }
       #entry-form {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        margin-bottom: 20px;
+        gap: 15px;
+        margin-bottom: 30px;
         transition: opacity 0.5s ease-in-out;
       }
       #entry-form input {
-        padding: 10px;
+        padding: 15px;
         border: none;
-        border-radius: 5px;
-        background-color: rgba(255, 255, 255, 0.1);
+        border-bottom: 2px solid #fc4c02;
+        background-color: transparent;
         color: white;
+        font-size: 18px;
+        font-family: "Roboto Mono", monospace;
       }
       #entry-form button,
       #start-timer,
       #video-upload-btn {
-        padding: 10px;
+        padding: 15px;
         background-color: #fc4c02;
         color: white;
         border: none;
-        border-radius: 5px;
         cursor: pointer;
         font-weight: bold;
-        transition: opacity 0.5s ease-in-out;
+        font-size: 18px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s ease;
+      }
+      #entry-form button:hover,
+      #start-timer:hover,
+      #video-upload-btn:hover {
+        background-color: #ff6b3d;
+        transform: scale(1.05);
       }
       #timer {
         text-align: center;
-        font-size: 36px;
-        margin: 20px 0;
+        font-size: 72px;
+        margin: 30px 0;
         font-weight: bold;
       }
       .athlete {
-        margin-bottom: 20px;
-        padding: 10px;
+        margin-bottom: 30px;
+        padding: 20px;
         background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 5px;
+        border-left: 5px solid #fc4c02;
       }
       .athlete-name {
-        font-size: 24px;
+        font-size: 36px;
         font-weight: bold;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
+        text-transform: uppercase;
       }
       .athlete-stats {
         display: flex;
@@ -103,26 +117,17 @@
         text-align: center;
       }
       .stat-label {
-        font-size: 12px;
+        font-size: 14px;
         text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
       }
       .stat-value {
-        font-size: 20px;
+        font-size: 28px;
         font-weight: bold;
       }
       #debug-info {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 10px;
-        border-radius: 5px;
-        font-size: 12px;
-        z-index: 2;
-        max-width: 300px;
-        max-height: 80%;
-        overflow-y: auto;
+        display: none;
       }
     </style>
   </head>
@@ -256,8 +261,9 @@
         athletesList.innerHTML = ""; // Clear existing content
 
         athletes.sort((a, b) => b.distance - a.distance);
+        const topThree = athletes.slice(0, 3); // Get only top 3 athletes
 
-        athletes.forEach((athlete, index) => {
+        topThree.forEach((athlete, index) => {
           const athleteElement = document.createElement("div");
           athleteElement.className = "athlete";
           athleteElement.innerHTML = `
