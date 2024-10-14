@@ -3,28 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Manual Leaderboard Entry</title>
+    <title>Minimalist Leaderboard</title>
     <style>
       body,
       html {
         margin: 0;
         padding: 0;
         font-family: "Helvetica Neue", Arial, sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-        line-height: 1.6;
+        background-color: black;
+        color: white;
+        height: 100%;
+        overflow: hidden;
+      }
+      #video-background {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -1;
       }
       #leaderboard-container {
-        max-width: 800px;
+        position: relative;
+        max-width: 400px;
         margin: 20px auto;
         padding: 20px;
-        background-color: white;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.7);
+        border-radius: 10px;
+        z-index: 1;
       }
       h1 {
         text-align: center;
-        color: #fc4c02;
+        font-size: 24px;
+        margin-bottom: 20px;
       }
       #entry-form {
         display: flex;
@@ -33,62 +46,74 @@
         margin-bottom: 20px;
       }
       #entry-form input {
-        padding: 5px;
-        border: 1px solid #ddd;
-        border-radius: 3px;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
       }
-      #entry-form button {
+      #entry-form button,
+      #start-timer,
+      #video-upload {
         padding: 10px;
         background-color: #fc4c02;
         color: white;
         border: none;
-        border-radius: 3px;
+        border-radius: 5px;
         cursor: pointer;
+        font-weight: bold;
       }
       #timer {
         text-align: center;
-        font-size: 24px;
+        font-size: 36px;
         margin: 20px 0;
+        font-weight: bold;
       }
       .athlete {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        margin-bottom: 20px;
         padding: 10px;
-        border-bottom: 1px solid #eee;
-      }
-      .athlete:last-child {
-        border-bottom: none;
-      }
-      .athlete-rank {
-        font-weight: bold;
-        font-size: 1.2em;
-        width: 30px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
       }
       .athlete-name {
-        flex-grow: 1;
-        margin-left: 10px;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 5px;
       }
       .athlete-stats {
         display: flex;
-        gap: 20px;
+        justify-content: space-between;
       }
       .stat {
-        text-align: right;
+        text-align: center;
       }
       .stat-label {
-        font-size: 0.8em;
-        color: #666;
+        font-size: 12px;
+        text-transform: uppercase;
       }
       .stat-value {
-        font-size: 1.2em;
+        font-size: 20px;
         font-weight: bold;
       }
     </style>
   </head>
   <body>
+    <video id="video-background" autoplay muted loop>
+      <source src="" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
     <div id="leaderboard-container">
-      <h1>Manual Leaderboard Entry</h1>
+      <h1>LEADERBOARD</h1>
+      <input
+        type="file"
+        id="video-upload"
+        accept="video/*"
+        style="display: none"
+      />
+      <button onclick="document.getElementById('video-upload').click()">
+        Upload Background Video
+      </button>
       <div id="entry-form">
         <input type="text" id="athlete-name" placeholder="Athlete Name" />
         <input type="number" id="distance" placeholder="Distance (km)" />
@@ -96,7 +121,9 @@
         <input type="number" id="elevation" placeholder="Elevation (m)" />
         <button onclick="addAthlete()">Add Athlete</button>
       </div>
-      <button onclick="startTimer()">Start 5-second Timer</button>
+      <button id="start-timer" onclick="startTimer()">
+        Start 5-second Timer
+      </button>
       <div id="timer"></div>
       <div id="athletes-list"></div>
     </div>
@@ -154,7 +181,7 @@
           timeLeft--;
           if (timeLeft < 0) {
             clearInterval(timerInterval);
-            timerElement.textContent = "Time's up!";
+            timerElement.textContent = "GO!";
             displayLeaderboard();
           }
         }, 1000);
@@ -170,8 +197,7 @@
           const athleteElement = document.createElement("div");
           athleteElement.className = "athlete";
           athleteElement.innerHTML = `
-                <div class="athlete-rank">${index + 1}</div>
-                <div class="athlete-name">${athlete.name}</div>
+                <div class="athlete-name">${index + 1}. ${athlete.name}</div>
                 <div class="athlete-stats">
                     <div class="stat">
                         <div class="stat-label">Distance</div>
@@ -205,6 +231,14 @@
           }, 2000);
         });
       }
+
+      document
+        .getElementById("video-upload")
+        .addEventListener("change", function (event) {
+          const file = event.target.files[0];
+          const videoURL = URL.createObjectURL(file);
+          document.getElementById("video-background").src = videoURL;
+        });
     </script>
   </body>
 </html>
