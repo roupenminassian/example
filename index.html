@@ -224,7 +224,6 @@
           timeLeft--;
           if (timeLeft < 0) {
             clearInterval(timerInterval);
-            timerElement.textContent = "GO!";
             hideInputFields();
             displayLeaderboard();
             setTimeout(showInputFields, 10000); // Show input fields after 10 seconds
