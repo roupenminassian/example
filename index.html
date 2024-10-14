@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Minimalist Leaderboard</title>
+    <title>Leaderboard with Video Border</title>
     <style>
       body,
       html {
@@ -13,27 +13,39 @@
         background-color: black;
         color: white;
         height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .container {
+        position: relative;
+        width: 90vw;
+        max-width: 600px;
+        aspect-ratio: 9 / 16;
         overflow: hidden;
       }
-      #video-background {
-        position: fixed;
-        right: 0;
-        bottom: 0;
-        min-width: 100%;
-        min-height: 100%;
-        width: auto;
-        height: auto;
-        z-index: 0;
+      #video-border {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         object-fit: cover;
+        z-index: 0;
       }
       #leaderboard-container {
-        position: relative;
-        max-width: 400px;
-        margin: 20px auto;
-        padding: 20px;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
         background-color: rgba(0, 0, 0, 0.7);
         border-radius: 10px;
         z-index: 1;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
       }
       h1 {
         text-align: center;
@@ -113,41 +125,43 @@
     </style>
   </head>
   <body>
-    <video id="video-background" autoplay muted loop playsinline>
-      <source src="" type="video/mp4" />
-      <source src="" type="video/webm" />
-      <source src="" type="video/quicktime" />
-      Your browser does not support the video tag.
-    </video>
-
     <div id="debug-info"></div>
 
-    <div id="leaderboard-container">
-      <h1>LEADERBOARD</h1>
-      <input
-        type="file"
-        id="video-upload"
-        accept="video/*"
-        style="display: none"
-      />
-      <button
-        id="video-upload-btn"
-        onclick="document.getElementById('video-upload').click()"
-      >
-        Upload Background Video
-      </button>
-      <div id="entry-form">
-        <input type="text" id="athlete-name" placeholder="Athlete Name" />
-        <input type="number" id="distance" placeholder="Distance (km)" />
-        <input type="number" id="time" placeholder="Time (hours)" />
-        <input type="number" id="elevation" placeholder="Elevation (m)" />
-        <button onclick="addAthlete()">Add Athlete</button>
+    <div class="container">
+      <video id="video-border" autoplay muted loop playsinline>
+        <source src="" type="video/mp4" />
+        <source src="" type="video/webm" />
+        <source src="" type="video/quicktime" />
+        Your browser does not support the video tag.
+      </video>
+
+      <div id="leaderboard-container">
+        <h1>LEADERBOARD</h1>
+        <input
+          type="file"
+          id="video-upload"
+          accept="video/*"
+          style="display: none"
+        />
+        <button
+          id="video-upload-btn"
+          onclick="document.getElementById('video-upload').click()"
+        >
+          Upload Border Video
+        </button>
+        <div id="entry-form">
+          <input type="text" id="athlete-name" placeholder="Athlete Name" />
+          <input type="number" id="distance" placeholder="Distance (km)" />
+          <input type="number" id="time" placeholder="Time (hours)" />
+          <input type="number" id="elevation" placeholder="Elevation (m)" />
+          <button onclick="addAthlete()">Add Athlete</button>
+        </div>
+        <button id="start-timer" onclick="startTimer()">
+          Start 5-second Timer
+        </button>
+        <div id="timer"></div>
+        <div id="athletes-list"></div>
       </div>
-      <button id="start-timer" onclick="startTimer()">
-        Start 5-second Timer
-      </button>
-      <div id="timer"></div>
-      <div id="athletes-list"></div>
     </div>
 
     <script>
@@ -259,7 +273,7 @@
         .addEventListener("change", function (event) {
           const file = event.target.files[0];
           const videoURL = URL.createObjectURL(file);
-          const videoElement = document.getElementById("video-background");
+          const videoElement = document.getElementById("video-border");
           const videoSources = videoElement.getElementsByTagName("source");
           const debugInfo = document.getElementById("debug-info");
 
