@@ -224,10 +224,13 @@
           timeLeft--;
           if (timeLeft < 0) {
             clearInterval(timerInterval);
-            timerElement.textContent = "";
+            timerElement.textContent = "GO!";
             hideInputFields();
-            displayLeaderboard();
-            setTimeout(showInputFields, 10000); // Show input fields after 10 seconds
+            setTimeout(() => {
+              timerElement.textContent = "";
+              displayLeaderboard();
+            }, 2000); // 2-second delay before displaying leaderboard
+            setTimeout(showInputFields, 14000); // Show input fields after 14 seconds (2s delay + 10s display + 2s for animations)
           }
         }, 1000);
       }
@@ -267,22 +270,22 @@
           const athleteElement = document.createElement("div");
           athleteElement.className = "athlete";
           athleteElement.innerHTML = `
-                <div class="athlete-name">${index + 1}. ${athlete.name}</div>
-                <div class="athlete-stats">
-                    <div class="stat">
-                        <div class="stat-label">Distance</div>
-                        <div class="stat-value distance">0</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Time</div>
-                        <div class="stat-value time">0</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Elevation</div>
-                        <div class="stat-value elevation">0</div>
-                    </div>
-                </div>
-            `;
+                  <div class="athlete-name">${index + 1}. ${athlete.name}</div>
+                  <div class="athlete-stats">
+                      <div class="stat">
+                          <div class="stat-label">Distance</div>
+                          <div class="stat-value distance">0</div>
+                      </div>
+                      <div class="stat">
+                          <div class="stat-label">Time</div>
+                          <div class="stat-value time">0</div>
+                      </div>
+                      <div class="stat">
+                          <div class="stat-label">Elevation</div>
+                          <div class="stat-value elevation">0</div>
+                      </div>
+                  </div>
+              `;
           athletesList.appendChild(athleteElement);
 
           const distanceElement = athleteElement.querySelector(".distance");
