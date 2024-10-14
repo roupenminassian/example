@@ -106,6 +106,9 @@
         border-radius: 5px;
         font-size: 12px;
         z-index: 2;
+        max-width: 300px;
+        max-height: 80%;
+        overflow-y: auto;
       }
     </style>
   </head>
@@ -314,6 +317,16 @@
                 - Z-index: ${computedStyle.zIndex}<br>
             `;
           }, 1000);
+
+          // Additional error handling
+          window.addEventListener("unhandledrejection", function (event) {
+            debugInfo.innerHTML += `Unhandled promise rejection: ${event.reason}<br>`;
+          });
+
+          window.onerror = function (message, source, lineno, colno, error) {
+            debugInfo.innerHTML += `Global error: ${message}<br>`;
+            return false;
+          };
         });
     </script>
   </body>
