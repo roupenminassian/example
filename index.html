@@ -229,7 +229,7 @@
             setTimeout(() => {
               timerElement.textContent = "";
               displayLeaderboard();
-            }, 1000); // 2-second delay before displaying leaderboard
+            }, 500); // 2-second delay before displaying leaderboard
             setTimeout(showInputFields, 14000); // Show input fields after 14 seconds (2s delay + 10s display + 2s for animations)
           }
         }, 1000);
@@ -292,9 +292,9 @@
           const timeElement = athleteElement.querySelector(".time");
           const elevationElement = athleteElement.querySelector(".elevation");
 
-          animateValue(distanceElement, 0, athlete.distance, 4000);
-          animateValue(timeElement, 0, athlete.time, 4500);
-          animateValue(elevationElement, 0, athlete.elevation, 5000);
+          animateValue(distanceElement, 0, athlete.distance, 2000);
+          animateValue(timeElement, 0, athlete.time, 5000);
+          animateValue(elevationElement, 0, athlete.elevation, 7000);
 
           // Update final values after animation
           setTimeout(() => {
